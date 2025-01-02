@@ -1,47 +1,46 @@
 <script setup lang="ts">
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref, shallowRef } from 'vue'
+import StartPanel from './components/StartPanel.vue'
+import PuzzleBoard from './components/Puzzle/PuzzleBoard.vue'
+
+// State
+const playing = ref(false)
+
+// Component references
+const puzzleBoard = shallowRef<InstanceType<typeof PuzzleBoard> | null>(null)
+
+// Handle game start event
+function createPuzzle(payload: { image: string; size: { horizontal: number; vertical: number } }) {
+  playing.value = true
+  puzzleBoard.value?.createPuzzle(payload)
+}
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
-
-    <div class="wrapper">
-      <HelloWorld msg="You did it!" />
-    </div>
-  </header>
-
   <main>
-    <TheWelcome />
+    <PuzzleBoard ref="puzzleBoard" v-show="playing" />
+    <StartPanel @gameStart="createPuzzle" v-show="!playing" />
   </main>
 </template>
 
 <style scoped>
-header {
-  line-height: 1.5;
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
 }
 
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
+main {
+  font: 14px/20px sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  padding: 16px;
 }
 
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
+header h1 {
+  font-weight: 100;
+  line-height: 80px;
+  font-size: 38px;
 }
 </style>

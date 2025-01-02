@@ -1,0 +1,19 @@
+@import './variables';
+
+body {
+  color: $yellow;
+  background: $dark-blue;
+  transition:
+    color 0.5s,
+    background-color 0.5s;
+  line-height: 1.6;
+  font-family: $primaiy-font;
+  font-size: 16px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.error {
+  color: $red;
+}
