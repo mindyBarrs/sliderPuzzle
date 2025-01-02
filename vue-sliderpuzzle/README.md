@@ -1,18 +1,10 @@
-#  vue-sliderpuzzle
+# vue-sliderpuzzle
 
-This template should help get you started developing with Vue 3 in Vite.
+This slider puzzle application was created using Vue 3 in Vite. The application uses [Unsplash API](https://unsplash.com/) to either randomly get a image or allows the user to search for a image and slect one to use with the puzzle.
 
-## Recommended IDE Setup
+## Styling
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
-
-## Type Support for `.vue` Imports in TS
-
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
+The styling of the application uses SCSS and this [Color Pallete](https://coolors.co/palette/233d4d-fe7f2d-fcca46-a1c181-619b8a).
 
 ## Project Setup
 
