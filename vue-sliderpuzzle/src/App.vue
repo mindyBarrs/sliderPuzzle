@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Main from './views/Main.vue'
+import MainPage from './views/MainPage.vue'
 </script>
 
 <template>
   <h1>Slider Puzzle</h1>
 
-  <Main />
+  <MainPage />
 </template>
 
 <style scoped>

@@ -2,7 +2,6 @@
 import { ref, shallowRef } from 'vue'
 
 import PuzzleBoard from '../components/Puzzle/PuzzleBoard.vue'
-import Search from '../components/Search.vue'
 import StartPanel from '../components/StartPanel.vue'
 
 // State
@@ -20,8 +19,6 @@ function createPuzzle(payload: { image: string; size: { horizontal: number; vert
 
 <template>
   <main>
-    <Search v-show="!playing" />
-
     <PuzzleBoard ref="puzzleBoard" v-show="playing" />
 
     <StartPanel @gameStart="createPuzzle" v-show="!playing" />

@@ -1,10 +1,9 @@
+// search button opens a modal
 <template>
   <form id="optionsForm" @submit.prevent="createPuzzle">
-    <img alt="Start panel image" :src="image" v-if="image" />
+    <button type="submit">Create Puzzle with Random Image</button>
 
-    <div>
-      <button type="submit" :disabled="!image">Create Puzzle</button>
-    </div>
+    <button type="submit">Search for image & Create Puzzle</button>
   </form>
 </template>
 
@@ -33,21 +32,20 @@ defineEmits<{
 }>()
 </script>
 
-<style scoped>
-img {
-  border: 1px solid #ccc;
-  margin-bottom: 8px;
-  width: 100%;
-  max-width: 300px;
-  display: block;
+<style lang="scss">
+form {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 15px;
 }
 
 button {
   -webkit-appearance: none;
   appearance: none;
   padding: 12px 16px;
-  background-color: #00cccc;
-  color: #000;
+  background-color: $lite-green;
+  color: $black;
   border: none;
   border-radius: 4px;
   font-size: 14px;
@@ -60,17 +58,11 @@ button {
 }
 
 button:focus {
-  outline: 2px solid #005757;
+  outline: 2px solid $mid-green;
   outline-offset: 2px;
 }
 
 button:hover {
-  background-color: #009999;
-}
-
-button:disabled {
-  background-color: #cccccc;
-  color: #666666;
-  cursor: not-allowed;
+  background-color: $mid-green;
 }
 </style>
