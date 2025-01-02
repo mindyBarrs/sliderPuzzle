@@ -6,6 +6,10 @@ app = Flask(__name__)
 # Replace with your Unsplash API access key
 UNSPLASH_ACCESS_KEY = "your_access_key_here"
 
+@app.route('/', methods=['GET'])
+def home():
+    return jsonify({"message": "listining on port 5000"})
+
 @app.route('/random', methods=['GET'])
 def get_random_photo():
     """
