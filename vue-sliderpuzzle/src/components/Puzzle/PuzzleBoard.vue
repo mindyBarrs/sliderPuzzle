@@ -18,7 +18,7 @@
       <div class="preview">
         <h3>Image Preview</h3>
 
-        <img alt="" src="@/assets/monks.jpg" v-if="image" />
+        <img :alt="imageAlt" :src="image" v-if="image" />
       </div>
     </div>
 
@@ -45,7 +45,8 @@ export default {
   components: { PuzzleTile },
   data() {
     return {
-      image: [{ url: '../assets/monks.jpg' }],
+      image: '',
+      imageAlt: '',
       size: {
         horizontal: 4,
         vertical: 4,
@@ -91,7 +92,8 @@ export default {
     // Creates Puzzle Board
     createPuzzle({ image, size }) {
       this.size = size
-      this.image = image
+      this.image = image.urls.small
+      this.imageAlt = image.alt_description
 
       const img = new Image()
 
@@ -103,7 +105,7 @@ export default {
         this.shuffleTiles()
       }
 
-      img.src = image
+      img.src = this.image
     },
     // Generate Puzzle tiles
     generatePuzzleTiles() {
@@ -218,6 +220,18 @@ export default {
   flex-wrap: wrap;
 }
 
+.preview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
 .controls {
   margin-top: 30px;
 
@@ -239,10 +253,5 @@ export default {
     border-radius: 3px;
     margin-right: 15px;
   }
-}
-
-img {
-  width: 300px;
-  height: 300px;
 }
 </style>

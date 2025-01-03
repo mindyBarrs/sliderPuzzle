@@ -8,11 +8,19 @@
 </template>
 
 <script setup lang="ts">
+import { defineEmits } from 'vue'
+import { storeToRefs } from 'pinia'
+
+import { useImageStore } from '@/stores/imageStore'
+
 // Import image
 import monksImage from '../assets/monks.jpg'
 
+const imageStore = useImageStore()
+const { image } = storeToRefs(imageStore)
+const { getRandomImage } = imageStore
+
 // Reactive properties
-const image = monksImage
 const size = {
   horizontal: 4,
   vertical: 4,
@@ -27,8 +35,15 @@ const emit = defineEmits<{
 }>()
 
 // Emit event to parent
-function createPuzzle() {
-  emit('gameStart', { image, size })
+async function createPuzzle() {
+  try {
+    await getRandomImage()
+
+    emit('gameStart', { image: image.value, size })
+  } catch (error) {
+    console.error('Failed to get random image:', error)
+    emit('gameStart', { image: monksImage, size })
+  }
 }
 </script>
 

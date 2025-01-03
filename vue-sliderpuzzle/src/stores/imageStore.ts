@@ -17,7 +17,6 @@ export const useImageStore = defineStore('imageStore', {
       try {
         const response = await axios.get(API_RANDOM_URL)
         this.image = response.data
-        console.log(this.image)
       } catch (error) {
         if (error instanceof Error) {
           this.error = error.message
