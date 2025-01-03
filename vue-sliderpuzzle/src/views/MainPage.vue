@@ -1,26 +1,30 @@
-<script setup lang="ts">
-import { ref, shallowRef } from 'vue'
+<template>
+  <PuzzleBoard ref="puzzleBoard" v-show="playing" />
 
-import PuzzleBoard from '../components/Puzzle/PuzzleBoard.vue'
-import StartPanel from '../components/StartPanel.vue'
+  <StartPanel @gameStart="createPuzzle" v-show="!playing" />
+</template>
 
-// State
-const playing = ref(false)
+<script lang="ts">
+/* COMPONENTS */
+import PuzzleBoard from '@/components/Puzzle/PuzzleBoard.vue'
+import StartPanel from '@/components/StartPanel.vue'
 
-// Component references
-const puzzleBoard = shallowRef<InstanceType<typeof PuzzleBoard> | null>(null)
-
-// Handle game start event
-function createPuzzle(payload: { image: string; size: { horizontal: number; vertical: number } }) {
-  playing.value = true
-  puzzleBoard.value?.createPuzzle(payload)
+export default {
+  name: 'app',
+  components: {
+    PuzzleBoard,
+    StartPanel,
+  },
+  data() {
+    return {
+      playing: false,
+    }
+  },
+  methods: {
+    createPuzzle(...args) {
+      this.playing = true
+      this.$refs.puzzleBoard.createPuzzle(...args)
+    },
+  },
 }
 </script>
-
-<template>
-  <main>
-    <PuzzleBoard ref="puzzleBoard" v-show="playing" />
-
-    <StartPanel @gameStart="createPuzzle" v-show="!playing" />
-  </main>
-</template>

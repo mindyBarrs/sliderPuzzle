@@ -8,7 +8,7 @@ import MainPage from './views/MainPage.vue'
   <MainPage />
 </template>
 
-<style scoped>
+<style lang="css">
 *,
 *::before,
 *::after {
@@ -17,6 +17,7 @@ import MainPage from './views/MainPage.vue'
 
 header h1 {
   font-weight: 100;
+  height: 80px;
   line-height: 80px;
   font-size: 38px;
 }

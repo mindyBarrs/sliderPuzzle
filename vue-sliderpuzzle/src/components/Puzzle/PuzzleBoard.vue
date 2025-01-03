@@ -1,210 +1,248 @@
-<script setup lang="ts">
-import { ref, computed, defineProps, onMounted } from 'vue'
-import sample from 'lodash/sample'
-
-/* COMPONENTS */
-import PuzzleTile from './PuzzleTile.vue'
-
-/* TYPES */
-interface Tile {
-  styles: {
-    background: string
-    backgroundPositionX: string
-    backgroundPositionY: string
-    width: string
-    height: string
-    order: number
-  }
-  position: number
-  isEmpty: boolean
-}
-
-interface BoardSize {
-  horizontal: number
-  vertical: number
-}
-
-/* PROPS */
-defineProps({
-  image: {
-    type: String,
-    default: '@/assets/monks.jpg',
-  },
-})
-
-const size = ref<BoardSize>({ horizontal: 4, vertical: 4 })
-const tiles = ref<Tile[]>([])
-const tileSize = ref({ width: 0, height: 0 })
-
-/* COMPUTED */
-const frameSize = computed(() => ({
-  width: `${tileSize.value.width * size.value.horizontal}px`,
-  height: `${tileSize.value.height * size.value.vertical}px`,
-}))
-
-const totalTiles = computed(() => size.value.horizontal * size.value.vertical)
-
-const valid = computed(() => {
-  return tiles.value.every((tile) => tile.styles.order === tile.position)
-})
-
-/* METHODS */
-function createPuzzle(imageUrl: string) {
-  const img = new Image()
-  img.onload = () => {
-    tileSize.value.width = Math.floor(img.width / size.value.horizontal)
-    tileSize.value.height = Math.floor(img.height / size.value.vertical)
-
-    generatePuzzleTiles()
-    shuffleTiles()
-  }
-  img.src = imageUrl
-}
-
-function generatePuzzleTiles() {
-  tiles.value = Array.from({ length: totalTiles.value }, (_, i) => ({
-    styles: {
-      background: i === 0 ? 'transparent' : `url(${image})`,
-      backgroundPositionX: `-${(i % size.value.horizontal) * tileSize.value.width}px`,
-      backgroundPositionY: `-${Math.floor(i / size.value.horizontal) * tileSize.value.height}px`,
-      width: `${tileSize.value.width}px`,
-      height: `${tileSize.value.height}px`,
-      order: i,
-    },
-    position: i,
-    isEmpty: i === 0,
-  }))
-}
-
-function shuffleTiles() {
-  for (let i = 0, j = totalTiles.value * 5; i < j; ++i) {
-    const emptyTile = tiles.value.find((t) => t.isEmpty)!
-    const movableTiles = tiles.value.filter((t) =>
-      getAdjacentOrders(emptyTile).includes(t.styles.order),
-    )
-    if (movableTiles.length) {
-      switchTiles(emptyTile, sample(movableTiles)!)
-    }
-  }
-}
-
-function moveTile(tile: Tile) {
-  if (tile.isEmpty) return
-
-  const target = tiles.value.find(
-    (t) => t.isEmpty && getAdjacentOrders(tile).includes(t.styles.order),
-  )
-
-  if (target) {
-    switchTiles(target, tile)
-  }
-}
-
-function switchTiles(a: Tile, b: Tile) {
-  ;[a.styles.order, b.styles.order] = [b.styles.order, a.styles.order]
-}
-
-function getAdjacentOrders(tile: Tile): (number | null)[] {
-  const pos = tile.styles.order
-  return [
-    pos % size.value.horizontal ? pos - 1 : null,
-    (pos + 1) % size.value.horizontal ? pos + 1 : null,
-    pos - size.value.horizontal,
-    pos + size.value.horizontal,
-  ]
-}
-
-function restart() {
-  createPuzzle(image)
-}
-
-onMounted(() => {
-  createPuzzle(image)
-})
-</script>
-
 <template>
-  <div class="board">
+  <main class="board">
     <div class="puzzle-board">
       <div class="frame-wrapper" :style="frameSize">
-        <p v-if="valid" class="win">You Win!</p>
+        <h2 v-if="isValid" class="win">You Win!</h2>
 
         <div class="frame" :style="frameSize">
-          <PuzzleTile v-for="tile in tiles" :key="tile.position" :tile="tile" @moving="moveTile" />
+          <PuzzleTile
+            v-for="tile in tiles"
+            :key="tile.position"
+            :tile="tile"
+            @moving="moveTile"
+            ref="tiles"
+          />
         </div>
       </div>
 
       <div class="preview">
         <h3>Image Preview</h3>
-        <img alt="slider puzzle image" :src="image" v-if="image" />
+
+        <img alt="" src="@/assets/monks.jpg" v-if="image" />
       </div>
     </div>
 
     <div class="controls">
-      <button class="shuffle" @click="shuffleTiles">Reshuffle Puzzle</button>
-      <button class="restart" @click="restart">New Game</button>
+      <button class="shuffle" @click.prevent="shuffleTiles">Reshuffle Puzzle</button>
+
+      <button class="restart" @click.prevent="restart">New Game</button>
     </div>
-  </div>
+  </main>
 </template>
 
-<style scoped>
+<script lang="ts">
+/* LIBRARY
+ * Url: https://lodash.com/docs/4.17.15#sample
+ * The reason I used to was to simplify the picking of
+ * a random item from the collection of movable tiles.
+ */
+import sample from 'lodash/sample'
+
+/* COMPONENTS */
+import PuzzleTile from './PuzzleTile.vue'
+
+export default {
+  components: { PuzzleTile },
+  data() {
+    return {
+      image: [{ url: '../assets/monks.jpg' }],
+      size: {
+        horizontal: 4,
+        vertical: 4,
+      },
+      tiles: [],
+      tileSize: {
+        width: 0,
+        height: 0,
+      },
+    }
+  },
+  computed: {
+    frameSize() {
+      return {
+        width: `${this.tileSize.width * this.size.horizontal}px`,
+        height: `${this.tileSize.height * this.size.vertical}px`,
+      }
+    },
+    /**
+     * The total number of tiles in the current board.
+     * @return {Number}
+     */
+    totalTiles() {
+      return this.size.horizontal * this.size.vertical
+    },
+    /**
+     * Determine if the current board is valid (solved).
+     * @return {boolean}
+     */
+    isValid() {
+      if (!this.tiles.length) {
+        return false
+      }
+      for (let i = 0; i < this.totalTiles; ++i) {
+        if (this.tiles[i].styles.order !== this.tiles[i].position) {
+          return false
+        }
+      }
+      return true
+    },
+  },
+  methods: {
+    // Creates Puzzle Board
+    createPuzzle({ image, size }) {
+      this.size = size
+      this.image = image
+
+      const img = new Image()
+
+      img.onload = () => {
+        this.tileSize.width = Math.floor(img.width / size.horizontal)
+        this.tileSize.height = Math.floor(img.height / size.vertical)
+
+        this.generatePuzzleTiles()
+        this.shuffleTiles()
+      }
+
+      img.src = image
+    },
+    // Generate Puzzle tiles
+    generatePuzzleTiles() {
+      this.tiles = []
+
+      for (let i = 0; i < this.totalTiles; ++i) {
+        this.tiles.push({
+          styles: {
+            background: i === 0 ? 'transparent' : `url(${this.image})`,
+            backgroundPositionX: `-${(i % this.size.horizontal) * this.tileSize.width}px`,
+            backgroundPositionY: `-${Math.floor(i / this.size.horizontal) * this.tileSize.height}px`,
+            width: `${this.tileSize.width}px`,
+            height: `${this.tileSize.height}px`,
+            order: i,
+          },
+          position: i,
+          isEmpty: i === 0,
+        })
+      }
+    },
+    // Suffle Puzzle Tiles
+    shuffleTiles() {
+      for (let i = 0, j = this.totalTiles * 5; i < j; ++i) {
+        const emptyTile = this.tiles.find((t) => t.isEmpty)
+
+        const movableTiles = this.tiles.filter((t) => {
+          return this.getAdjacentOrders(emptyTile).indexOf(t.styles.order) > -1
+        })
+
+        this.switchTiles(emptyTile, sample(movableTiles))
+      }
+    },
+    // Move Puzzle Tile to free space
+    moveTile(tile) {
+      if (tile.isEmpty) {
+        return
+      }
+
+      const target = this.tiles.find((t) => {
+        return t.isEmpty && this.getAdjacentOrders(tile).indexOf(t.styles.order) > -1
+      })
+
+      if (target) {
+        this.switchTiles(target, tile)
+      }
+    },
+    // Switch Puzzle Tiles
+    switchTiles(a, b) {
+      ;[a.styles.order, b.styles.order] = [b.styles.order, a.styles.order]
+    },
+    // Get Dirrections of Adjecent Puzzle Tiles
+    getAdjacentOrders(tile) {
+      const pos = tile.styles.order
+      return [
+        pos % this.size.horizontal ? pos - 1 : null,
+        (pos + 1) % this.size.horizontal ? pos + 1 : null,
+        pos - this.size.horizontal,
+        pos + this.size.horizontal,
+      ]
+    },
+    /* Restart Puzzle */
+    restart() {
+      this.$emit('restart')
+    },
+  },
+}
+</script>
+
+<style lang="scss">
 .puzzle-board {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-end;
+  gap: 25px;
 }
 
 .frame-wrapper {
-  margin: 0 50px;
+  margin-right: 50px;
   position: relative;
-  box-shadow: 0 0 10px #000;
-}
+  box-shadow: 0 0 0px 10px;
 
-.win {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: rgba(43, 181, 82, 0.7);
-  color: #fff;
-  font-size: 2rem;
-  text-transform: uppercase;
+  .original {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+  }
+
+  h2.win {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    font-size: 40px;
+    margin: 0 0;
+    background: rgba(97, 155, 138, 0.7);
+    text-transform: uppercase;
+  }
 }
 
 .frame {
   display: flex;
   flex-wrap: wrap;
-  background: #612211 url('../assets/wood.jpg');
-  background-size: cover;
 }
 
 .controls {
   margin-top: 30px;
-  display: flex;
-  gap: 15px;
+
+  .restart {
+    background: $lite-green;
+    display: inline-block;
+    text-decoration: none;
+    padding: 12px 12px;
+    color: #000;
+    border-radius: 3px;
+  }
+
+  .shuffle {
+    background: $orange;
+    display: inline-block;
+    text-decoration: none;
+    padding: 12px 12px;
+    color: #000;
+    border-radius: 3px;
+    margin-right: 15px;
+  }
 }
 
-button {
-  padding: 12px 20px;
-  border: none;
-  border-radius: 3px;
-  cursor: pointer;
-  font-size: 1rem;
-}
-
-.shuffle {
-  background: #dcedc1;
-  color: #000;
-}
-
-.restart {
-  background: #a8e6cf;
-  color: #000;
+img {
+  width: 300px;
+  height: 300px;
 }
 </style>

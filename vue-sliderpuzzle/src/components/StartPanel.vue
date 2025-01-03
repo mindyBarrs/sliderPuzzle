@@ -18,18 +18,18 @@ const size = {
   vertical: 4,
 }
 
-// Emit event to parent
-function createPuzzle() {
-  emit('gameStart', { image, size })
-}
-
 // Define emits
-defineEmits<{
+const emit = defineEmits<{
   (
     event: 'gameStart',
     payload: { image: string; size: { horizontal: number; vertical: number } },
   ): void
 }>()
+
+// Emit event to parent
+function createPuzzle() {
+  emit('gameStart', { image, size })
+}
 </script>
 
 <style lang="scss">
