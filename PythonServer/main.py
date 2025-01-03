@@ -1,10 +1,18 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
+from dotenv import load_dotenv
+
 import requests
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 app = Flask(__name__)
+CORS(app)
 
 # Replace with your Unsplash API access key
-UNSPLASH_ACCESS_KEY = "your_access_key_here"
+UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_API_KEY")
 
 @app.route('/', methods=['GET'])
 def home():
