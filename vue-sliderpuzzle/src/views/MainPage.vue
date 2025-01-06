@@ -1,7 +1,10 @@
 <template>
   <PuzzleBoard ref="puzzleBoard" v-show="playing" />
 
-  <StartPanel @gameStart="createPuzzle" v-show="!playing" />
+  <!-- Wrap StartPanel in a div -->
+  <div v-show="!playing">
+    <StartPanel @gameStart="createPuzzle" />
+  </div>
 </template>
 
 <script lang="ts">
@@ -22,6 +25,7 @@ export default {
   },
   methods: {
     createPuzzle(...args) {
+      console.log('hey')
       this.playing = true
       this.$refs.puzzleBoard.createPuzzle(...args)
     },

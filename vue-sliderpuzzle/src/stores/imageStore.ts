@@ -5,10 +5,10 @@ import { API_RANDOM_URL, API_SEARCH_URL } from '@/utils/constants/url.constants'
 
 export const useImageStore = defineStore('imageStore', {
   state: () => ({
-    image: null,
+    image: null as object | null,
     loading: false,
     error: '',
-    seachedImages: [],
+    searchedImages: [],
   }),
   actions: {
     async getRandomImage() {
@@ -32,7 +32,8 @@ export const useImageStore = defineStore('imageStore', {
 
       try {
         const response = await axios.post(API_SEARCH_URL, { term })
-        this.seachedImages = response.data
+
+        this.searchedImages = response.data.results
       } catch (error) {
         if (error instanceof Error) {
           this.error = error.message
@@ -42,6 +43,9 @@ export const useImageStore = defineStore('imageStore', {
       } finally {
         this.loading = false
       }
+    },
+    setImage(image: object) {
+      this.image = image
     },
   },
 })

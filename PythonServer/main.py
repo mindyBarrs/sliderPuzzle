@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from dotenv import load_dotenv
 
@@ -9,7 +9,7 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:5174"}})
 
 # Replace with your Unsplash API access key
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_API_KEY")
@@ -35,12 +35,13 @@ def get_random_photo():
     except requests.exceptions.RequestException as e:
         return jsonify({"error": str(e)}), 500
 
-@app.route('/search-photos', methods=['GET'])
+@app.route('/search-photos', methods=['POST'])
 def search_photos():
     """
     Search photos on Unsplash using a query term and return up to 25 results.
     """
-    query = request.args.get('query')  # Get the search term from query parameters
+    data = request.get_json()  # Get the JSON body of the request
+    query = data.get('term')  # Get the search term from query parameters
     if not query:
         return jsonify({"error": "Query parameter 'query' is required"}), 400
 

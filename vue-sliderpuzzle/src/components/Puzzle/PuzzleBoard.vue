@@ -41,16 +41,16 @@ import sample from 'lodash/sample'
 /* COMPONENTS */
 import PuzzleTile from './PuzzleTile.vue'
 
+// Import image
+import monksImage from '@/assets/monks.jpg'
+
 export default {
   components: { PuzzleTile },
   data() {
     return {
       image: '',
       imageAlt: '',
-      size: {
-        horizontal: 4,
-        vertical: 4,
-      },
+      size: {},
       tiles: [],
       tileSize: {
         width: 0,
@@ -80,6 +80,7 @@ export default {
       if (!this.tiles.length) {
         return false
       }
+
       for (let i = 0; i < this.totalTiles; ++i) {
         if (this.tiles[i].styles.order !== this.tiles[i].position) {
           return false
@@ -91,9 +92,11 @@ export default {
   methods: {
     // Creates Puzzle Board
     createPuzzle({ image, size }) {
+      const defaultImage = monksImage
+      console.log(';hello world', image)
+      this.image = image?.urls.small || defaultImage
+      this.imageAlt = image?.alt_description
       this.size = size
-      this.image = image.urls.small
-      this.imageAlt = image.alt_description
 
       const img = new Image()
 
@@ -110,7 +113,7 @@ export default {
     // Generate Puzzle tiles
     generatePuzzleTiles() {
       this.tiles = []
-
+      console.log('hey', this.totalTiles)
       for (let i = 0; i < this.totalTiles; ++i) {
         this.tiles.push({
           styles: {

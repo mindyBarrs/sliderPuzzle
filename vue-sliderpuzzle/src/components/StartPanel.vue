@@ -1,24 +1,43 @@
-// search button opens a modal
 <template>
-  <form id="optionsForm" @submit.prevent="createPuzzle">
-    <button type="submit">Create Puzzle with Random Image</button>
+  <div id="optionsForm">
+    <button @click="createPuzzle">Create Puzzle with Random Image</button>
+    <button type="button" @click="openModal">Search for image & Create Puzzle</button>
+  </div>
 
-    <button type="submit">Search for image & Create Puzzle</button>
-  </form>
+  <SearchModal
+    :isOpen="isModalOpened"
+    @modal-close="closeModal"
+    name="search-modal"
+    @gameStart="selectImage"
+  />
 </template>
 
 <script setup lang="ts">
-import { defineEmits } from 'vue'
+import { ref } from 'vue'
 import { storeToRefs } from 'pinia'
+
+import SearchModal from '@/components/Search/SearchModal.vue'
 
 import { useImageStore } from '@/stores/imageStore'
 
-// Import image
-import monksImage from '../assets/monks.jpg'
+import monksImage from '@/assets/monks.jpg'
 
 const imageStore = useImageStore()
 const { image } = storeToRefs(imageStore)
 const { getRandomImage } = imageStore
+
+const isModalOpened = ref(false)
+
+const openModal = () => {
+  isModalOpened.value = true
+}
+
+const closeModal = () => {
+  isModalOpened.value = false
+}
+
+// Define emits
+const emit = defineEmits(['gameStart'])
 
 // Reactive properties
 const size = {
@@ -26,55 +45,41 @@ const size = {
   vertical: 4,
 }
 
-// Define emits
-const emit = defineEmits<{
-  (
-    event: 'gameStart',
-    payload: { image: string; size: { horizontal: number; vertical: number } },
-  ): void
-}>()
-
 // Emit event to parent
-async function createPuzzle() {
+const createPuzzle = async () => {
   try {
     await getRandomImage()
-
     emit('gameStart', { image: image.value, size })
   } catch (error) {
     console.error('Failed to get random image:', error)
     emit('gameStart', { image: monksImage, size })
   }
 }
+
+const selectImage = (payload: {
+  image: string
+  size: { horizontal: number; vertical: number }
+}) => {
+  emit('gameStart', payload)
+}
 </script>
 
-<style lang="scss">
-form {
+<style lang="scss" scoped>
+#optionsForm {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 15px;
+  flex-direction: column;
+  gap: 10px;
 }
 
 button {
-  -webkit-appearance: none;
-  appearance: none;
-  padding: 12px 16px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
   background-color: $lite-green;
   color: $black;
-  border: none;
-  border-radius: 4px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-  transition:
-    background-color 0.3s ease,
-    transform 0.2s ease;
-}
-
-button:focus {
-  outline: 2px solid $mid-green;
-  outline-offset: 2px;
+  border: unset;
+  border-radius: 8px;
+  font-weight: 700;
 }
 
 button:hover {
