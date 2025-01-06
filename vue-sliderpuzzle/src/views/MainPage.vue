@@ -7,28 +7,17 @@
   </div>
 </template>
 
-<script lang="ts">
-/* COMPONENTS */
+<script setup lang="ts">
+import { ref } from 'vue'
+
 import PuzzleBoard from '@/components/Puzzle/PuzzleBoard.vue'
 import StartPanel from '@/components/StartPanel.vue'
 
-export default {
-  name: 'app',
-  components: {
-    PuzzleBoard,
-    StartPanel,
-  },
-  data() {
-    return {
-      playing: false,
-    }
-  },
-  methods: {
-    createPuzzle(...args) {
-      console.log('hey')
-      this.playing = true
-      this.$refs.puzzleBoard.createPuzzle(...args)
-    },
-  },
+const playing = ref(false)
+const puzzleBoard = ref(null)
+
+const createPuzzle = (...args: string[]) => {
+  playing.value = true
+  puzzleBoard.value?.createPuzzle(...args)
 }
 </script>

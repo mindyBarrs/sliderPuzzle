@@ -69,7 +69,7 @@ interface Image {
 }
 
 const selectImage = (image: Image) => {
-  emit('gameStart', { image: image.urls.small })
+  emit('gameStart', { image: image, size: { horizontal: 4, vertical: 4 } })
   closeModal()
 }
 </script>
