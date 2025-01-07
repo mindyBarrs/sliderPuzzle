@@ -3,13 +3,16 @@
     <div class="modal-wrapper">
       <div class="modal-container" ref="target">
         <div class="modal-header">
-          <slot name="header">Search for an image</slot>
+          <slot name="header"><button @click.stop="closeModal">X</button></slot>
         </div>
+
         <div class="modal-body">
           <slot name="content">
             <SearchBar />
 
-            <div v-if="searchedImages.length === 0">No images found</div>
+            <div v-if="searchedImages.length === 0 && !error">No images found</div>
+
+            <div v-else-if="error" class="error">{{ error }}</div>
 
             <div v-else>
               <ul class="image-container">
@@ -25,10 +28,9 @@
             </div>
           </slot>
         </div>
+
         <div class="modal-footer">
-          <slot name="footer">
-            <button @click.stop="closeModal">Close</button>
-          </slot>
+          <slot name="footer"> </slot>
         </div>
       </div>
     </div>
@@ -51,8 +53,8 @@ defineProps({
 const emit = defineEmits(['modal-close', 'gameStart'])
 
 const imageStore = useImageStore()
-const { searchedImages } = storeToRefs(imageStore)
-
+const { searchedImages, error } = storeToRefs(imageStore)
+console.log(error)
 const target = ref(null)
 onClickOutside(target, () => closeModal())
 
@@ -89,9 +91,33 @@ const selectImage = (image: Image) => {
   width: 550px;
   margin: 150px auto;
   padding: 20px 30px;
-  background-color: #fff;
-  border-radius: 2px;
+  background-color: $white;
+  color: $dark-blue;
+  font-weight: 700;
+  border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  font-size: 1.5rem;
+
+  button {
+    border-radius: 50px;
+    padding: 5px 10px;
+    background-color: unset;
+    border: 1px solid #000;
+
+    &:hover {
+      background-color: $dark-blue;
+      color: $yellow;
+    }
+  }
 }
 
 .image-container {

@@ -43,7 +43,7 @@ def search_photos():
     data = request.get_json()  # Get the JSON body of the request
     query = data.get('term')  # Get the search term from query parameters
     if not query:
-        return jsonify({"error": "Query parameter 'query' is required"}), 400
+        return jsonify({"error": "Please enter a search term"}), 400
 
     url = "https://api.unsplash.com/search/photos"
     params = {

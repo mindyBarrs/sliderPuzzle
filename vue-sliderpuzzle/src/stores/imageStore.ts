@@ -50,7 +50,10 @@ export const useImageStore = defineStore('imageStore', {
         const response = await axios.post(API_SEARCH_URL, { term })
         this.searchedImages = response.data.results
       } catch (error) {
-        if (error instanceof Error) {
+        console.log(error)
+        if (axios.isAxiosError(error)) {
+          this.error = error.response?.data?.error
+        } else if (error instanceof Error) {
           this.error = error.message
         } else {
           this.error = String(error)
