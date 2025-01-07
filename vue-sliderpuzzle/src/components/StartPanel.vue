@@ -72,14 +72,7 @@ const selectImage = (payload: {
 }
 
 button {
-  padding: 10px;
-  font-size: 16px;
-  cursor: pointer;
   background-color: $lite-green;
-  color: $black;
-  border: unset;
-  border-radius: 8px;
-  font-weight: 700;
 }
 
 button:hover {

@@ -8,7 +8,7 @@ import { defineEmits, defineProps } from 'vue'
 // Define props with type annotations
 const props = defineProps<{
   tile: {
-    styles: Record<string, string>
+    styles: Record<string, string | number>
     isEmpty: boolean
   }
 }>()

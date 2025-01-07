@@ -1,178 +1,221 @@
 <template>
   <main class="board">
+    <!-- Puzzle Board -->
     <div class="puzzle-board">
       <div class="frame-wrapper" :style="frameSize">
-        <h2 v-if="isValid" class="win">You Win!</h2>
+        <h2 v-if="isSolved" class="win">You Win!</h2>
 
         <div class="frame" :style="frameSize">
-          <PuzzleTile
-            v-for="tile in tiles"
-            :key="tile.position"
-            :tile="tile"
-            @moving="moveTile"
-            ref="tiles"
-          />
+          <PuzzleTile v-for="tile in tiles" :key="tile.position" :tile="tile" @move="moveTile" />
         </div>
       </div>
 
+      <!-- Image Preview -->
       <div class="preview">
         <h3>Image Preview</h3>
-
-        <img :alt="imageAlt" :src="image" v-if="image" />
+        <img v-if="image" :src="image" :alt="imageAlt" />
       </div>
     </div>
 
+    <!-- Controls -->
     <div class="controls">
-      <button class="shuffle" @click.prevent="shuffleTiles">Reshuffle Puzzle</button>
-
-      <button class="restart" @click.prevent="restart">New Game</button>
+      <button class="shuffle" @click="shuffleTiles">Reshuffle Puzzle</button>
+      <button class="restart" @click="restartGame">New Game</button>
     </div>
   </main>
 </template>
 
 <script lang="ts">
-/* LIBRARY
- * Url: https://lodash.com/docs/4.17.15#sample
- * The reason I used to was to simplify the picking of
- * a random item from the collection of movable tiles.
- */
-import sample from 'lodash/sample'
-
-/* COMPONENTS */
+import { ref, computed } from 'vue'
+import { sample } from 'lodash'
 import PuzzleTile from './PuzzleTile.vue'
-
-// Import image
 import monksImage from '@/assets/monks.jpg'
 
 export default {
   components: { PuzzleTile },
-  data() {
-    return {
-      image: '',
-      imageAlt: '',
-      size: {},
-      tiles: [],
-      tileSize: {
-        width: 0,
-        height: 0,
-      },
-    }
-  },
-  computed: {
-    frameSize() {
-      return {
-        width: `${this.tileSize.width * this.size.horizontal}px`,
-        height: `${this.tileSize.height * this.size.vertical}px`,
-      }
-    },
-    /**
-     * The total number of tiles in the current board.
-     * @return {Number}
-     */
-    totalTiles() {
-      return this.size.horizontal * this.size.vertical
-    },
-    /**
-     * Determine if the current board is valid (solved).
-     * @return {boolean}
-     */
-    isValid() {
-      if (!this.tiles.length) {
-        return false
-      }
 
-      for (let i = 0; i < this.totalTiles; ++i) {
-        if (this.tiles[i].styles.order !== this.tiles[i].position) {
-          return false
+  setup() {
+    const image = ref('')
+    const imageAlt = ref('')
+    const size = ref({ horizontal: 4, vertical: 4 })
+    const tiles = ref<
+      {
+        styles: {
+          background: string
+          backgroundPositionX: string
+          backgroundPositionY: string
+          width: string
+          height: string
+          order: number
         }
+        position: number
+        isEmpty: boolean
+      }[]
+    >([])
+    const tileSize = ref({ width: 0, height: 0 })
+
+    // Frame size calculation
+    const frameSize = computed(() => ({
+      width: `${tileSize.value.width * size.value.horizontal}px`,
+      height: `${tileSize.value.height * size.value.vertical}px`,
+    }))
+
+    // Check if the puzzle is solved
+    const isSolved = computed(() => {
+      return tiles.value.every((tile) => tile.styles.order === tile.position)
+    })
+
+    // Create a new puzzle
+    function createPuzzle({
+      image: img,
+      size: newSize,
+    }: {
+      image: { urls: { small: string }; alt_description: string }
+      size: { horizontal: number; vertical: number }
+    }) {
+      image.value = img?.urls.small || monksImage
+      imageAlt.value = img?.alt_description || 'Default image'
+      size.value = newSize
+
+      const imgElement = new Image()
+      imgElement.onload = () => {
+        tileSize.value.width = Math.floor(imgElement.width / size.value.horizontal)
+        tileSize.value.height = Math.floor(imgElement.height / size.value.vertical)
+        generatePuzzleTiles()
+        shuffleTiles()
       }
-      return true
-    },
-  },
-  methods: {
-    // Creates Puzzle Board
-    createPuzzle({ image, size }) {
-      const defaultImage = monksImage
-      console.log(';hello world', image)
-      this.image = image?.urls.small || defaultImage
-      this.imageAlt = image?.alt_description
-      this.size = size
+      imgElement.src = image.value
+    }
 
-      const img = new Image()
+    // Generate puzzle tiles
+    function generatePuzzleTiles() {
+      tiles.value = Array.from({ length: size.value.horizontal * size.value.vertical }, (_, i) => ({
+        styles: {
+          background: i === 0 ? 'transparent' : `url(${image.value})`,
+          backgroundPositionX: `-${(i % size.value.horizontal) * tileSize.value.width}px`,
+          backgroundPositionY: `-${Math.floor(i / size.value.horizontal) * tileSize.value.height}px`,
+          width: `${tileSize.value.width}px`,
+          height: `${tileSize.value.height}px`,
+          order: i,
+        },
+        position: i,
+        isEmpty: i === 0,
+      }))
+    }
 
-      img.onload = () => {
-        this.tileSize.width = Math.floor(img.width / size.horizontal)
-        this.tileSize.height = Math.floor(img.height / size.vertical)
-
-        this.generatePuzzleTiles()
-        this.shuffleTiles()
+    // Shuffle tiles
+    function shuffleTiles() {
+      for (let i = 0; i < tiles.value.length * 5; i++) {
+        const emptyTile = tiles.value.find((t) => t.isEmpty)
+        const movableTiles = tiles.value.filter((t) =>
+          getAdjacentOrders(emptyTile).includes(t.styles.order),
+        )
+        switchTiles(emptyTile, sample(movableTiles))
       }
+    }
 
-      img.src = this.image
-    },
-    // Generate Puzzle tiles
-    generatePuzzleTiles() {
-      this.tiles = []
-      console.log('hey', this.totalTiles)
-      for (let i = 0; i < this.totalTiles; ++i) {
-        this.tiles.push({
-          styles: {
-            background: i === 0 ? 'transparent' : `url(${this.image})`,
-            backgroundPositionX: `-${(i % this.size.horizontal) * this.tileSize.width}px`,
-            backgroundPositionY: `-${Math.floor(i / this.size.horizontal) * this.tileSize.height}px`,
-            width: `${this.tileSize.width}px`,
-            height: `${this.tileSize.height}px`,
-            order: i,
-          },
-          position: i,
-          isEmpty: i === 0,
-        })
+    // Move a tile
+    function moveTile(tile: {
+      styles: {
+        background: string
+        backgroundPositionX: string
+        backgroundPositionY: string
+        width: string
+        height: string
+        order: number
       }
-    },
-    // Suffle Puzzle Tiles
-    shuffleTiles() {
-      for (let i = 0, j = this.totalTiles * 5; i < j; ++i) {
-        const emptyTile = this.tiles.find((t) => t.isEmpty)
+      position: number
+      isEmpty: boolean
+    }) {
+      if (tile.isEmpty) return
+      const targetTile = tiles.value.find(
+        (t) => t.isEmpty && getAdjacentOrders(tile).includes(t.styles.order),
+      )
+      if (targetTile) switchTiles(targetTile, tile)
+    }
 
-        const movableTiles = this.tiles.filter((t) => {
-          return this.getAdjacentOrders(emptyTile).indexOf(t.styles.order) > -1
-        })
-
-        this.switchTiles(emptyTile, sample(movableTiles))
+    // Switch two tiles
+    function switchTiles(
+      tileA:
+        | {
+            styles: {
+              background: string
+              backgroundPositionX: string
+              backgroundPositionY: string
+              width: string
+              height: string
+              order: number
+            }
+            position: number
+            isEmpty: boolean
+          }
+        | undefined,
+      tileB:
+        | {
+            styles: {
+              background: string
+              backgroundPositionX: string
+              backgroundPositionY: string
+              width: string
+              height: string
+              order: number
+            }
+            position: number
+            isEmpty: boolean
+          }
+        | undefined,
+    ) {
+      if (tileA && tileB) {
+        ;[tileA.styles.order, tileB.styles.order] = [tileB.styles.order, tileA.styles.order]
       }
-    },
-    // Move Puzzle Tile to free space
-    moveTile(tile) {
-      if (tile.isEmpty) {
-        return
-      }
+    }
 
-      const target = this.tiles.find((t) => {
-        return t.isEmpty && this.getAdjacentOrders(tile).indexOf(t.styles.order) > -1
-      })
-
-      if (target) {
-        this.switchTiles(target, tile)
-      }
-    },
-    // Switch Puzzle Tiles
-    switchTiles(a, b) {
-      ;[a.styles.order, b.styles.order] = [b.styles.order, a.styles.order]
-    },
-    // Get Dirrections of Adjecent Puzzle Tiles
-    getAdjacentOrders(tile) {
+    // Get adjacent tile positions
+    function getAdjacentOrders(
+      tile:
+        | {
+            styles: {
+              background: string
+              backgroundPositionX: string
+              backgroundPositionY: string
+              width: string
+              height: string
+              order: number
+            }
+            position: number
+            isEmpty: boolean
+          }
+        | undefined,
+    ) {
+      if (!tile) return []
       const pos = tile.styles.order
       return [
-        pos % this.size.horizontal ? pos - 1 : null,
-        (pos + 1) % this.size.horizontal ? pos + 1 : null,
-        pos - this.size.horizontal,
-        pos + this.size.horizontal,
-      ]
-    },
-    /* Restart Puzzle */
-    restart() {
-      this.$emit('restart')
-    },
+        pos % size.value.horizontal ? pos - 1 : null,
+        (pos + 1) % size.value.horizontal ? pos + 1 : null,
+        pos - size.value.horizontal,
+        pos + size.value.horizontal,
+      ].filter(Boolean)
+    }
+
+    // Restart the game
+    function restartGame() {
+      createPuzzle({
+        image: { urls: { small: monksImage }, alt_description: 'Default image' },
+        size: size.value,
+      })
+    }
+
+    return {
+      image,
+      imageAlt,
+      tiles,
+      frameSize,
+      isSolved,
+      createPuzzle,
+      shuffleTiles,
+      moveTile,
+      restartGame,
+    }
   },
 }
 </script>
@@ -210,7 +253,7 @@ export default {
     align-items: center;
     justify-content: center;
     background: rgba(0, 0, 0, 0.5);
-    color: #fff;
+    color: $white;
     font-size: 40px;
     margin: 0 0;
     background: rgba(97, 155, 138, 0.7);
