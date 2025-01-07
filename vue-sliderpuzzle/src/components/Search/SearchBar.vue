@@ -1,9 +1,12 @@
 <template>
-  <label htmlFor="search">Search for an image</label>
-  <div class="search-wrapper">
-    <input id="search" type="text" placeholder="Search" v-model="searchTerm" />
+  <div>
+    <label htmlFor="search">Search for an image</label>
 
-    <button @click="searchImage(searchTerm)">Search</button>
+    <div class="search-wrapper">
+      <input id="search" type="text" placeholder="Search" v-model="searchTerm" />
+
+      <button @click="searchImage(searchTerm)">Search</button>
+    </div>
   </div>
 </template>
 

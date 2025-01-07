@@ -89,6 +89,7 @@ const selectImage = (image: Image) => {
 
 .modal-container {
   width: 550px;
+  height: 500px;
   margin: 150px auto;
   padding: 20px 30px;
   background-color: $white;
@@ -99,6 +100,9 @@ const selectImage = (image: Image) => {
   display: flex;
   flex-direction: column;
   gap: 15px;
+}
+.modal-body {
+  overflow: auto;
 }
 
 .modal-header {
