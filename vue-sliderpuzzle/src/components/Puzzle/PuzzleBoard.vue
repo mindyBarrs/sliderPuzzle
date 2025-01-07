@@ -19,8 +19,8 @@
 
     <!-- Controls -->
     <div class="controls">
-      <button class="shuffle" @click="shuffleTiles">Reshuffle Puzzle</button>
-      <button class="restart" @click="restartGame">New Game</button>
+      <button type="button" class="shuffle" @click="shuffleTiles">Reshuffle Puzzle</button>
+      <button type="button" class="restart" @click="restartGame">New Game</button>
     </div>
   </main>
 </template>

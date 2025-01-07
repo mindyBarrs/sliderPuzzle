@@ -1,11 +1,25 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-
 import { API_RANDOM_URL, API_SEARCH_URL } from '@/utils/constants/url.constants'
 
+interface Image {
+  id: string
+  alt_description: string
+  urls: {
+    small: string
+  }
+}
+
+interface ImageStoreState {
+  image: Image | null
+  loading: boolean
+  error: string
+  searchedImages: Image[]
+}
+
 export const useImageStore = defineStore('imageStore', {
-  state: () => ({
-    image: null as object | null,
+  state: (): ImageStoreState => ({
+    image: null,
     loading: false,
     error: '',
     searchedImages: [],
@@ -13,6 +27,7 @@ export const useImageStore = defineStore('imageStore', {
   actions: {
     async getRandomImage() {
       this.loading = true
+      this.error = ''
 
       try {
         const response = await axios.get(API_RANDOM_URL)
@@ -29,10 +44,10 @@ export const useImageStore = defineStore('imageStore', {
     },
     async searchImage(term: string) {
       this.loading = true
+      this.error = ''
 
       try {
         const response = await axios.post(API_SEARCH_URL, { term })
-
         this.searchedImages = response.data.results
       } catch (error) {
         if (error instanceof Error) {
@@ -43,9 +58,6 @@ export const useImageStore = defineStore('imageStore', {
       } finally {
         this.loading = false
       }
-    },
-    setImage(image: object) {
-      this.image = image
     },
   },
 })

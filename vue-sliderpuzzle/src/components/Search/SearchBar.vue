@@ -1,5 +1,3 @@
-<script setup lang="ts"></script>
-
 <template>
   <div>
     <input type="text" placeholder="Search" v-model="searchTerm" />
