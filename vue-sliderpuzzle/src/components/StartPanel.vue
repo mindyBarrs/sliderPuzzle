@@ -1,7 +1,9 @@
 <template>
   <div id="optionsForm">
     <button @click="createPuzzle">Create Puzzle with Random Image</button>
-    <button type="button" @click="openModal">Search for image & Create Puzzle</button>
+    <button type="button" ref="searchModalBtn" @click="openModal">
+      Search for image & Create Puzzle
+    </button>
   </div>
 
   <SearchModal

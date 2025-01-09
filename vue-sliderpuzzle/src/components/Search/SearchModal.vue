@@ -54,7 +54,7 @@ const emit = defineEmits(['modal-close', 'gameStart'])
 
 const imageStore = useImageStore()
 const { searchedImages, error } = storeToRefs(imageStore)
-console.log(error)
+
 const target = ref(null)
 onClickOutside(target, () => closeModal())
 
