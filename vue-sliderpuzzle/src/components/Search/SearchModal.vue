@@ -3,7 +3,7 @@
     <div class="modal-wrapper">
       <div class="modal-container" ref="target">
         <div class="modal-header">
-          <slot name="header"><button @click.stop="closeModal">X</button></slot>
+          <slot name="header"><button @click.stop="closeModal" ref="closeModalBtn">X</button></slot>
         </div>
 
         <div class="modal-body">

@@ -36,7 +36,8 @@ export function customMount<T extends ComponentPublicInstance>(
       ],
       provide: {
         // Example: Mock a global provider
-        myService: { fetchData: vi.fn() },
+        getRandomImage: { fetchData: vi.fn() },
+        searchImages: { fetchData: vi.fn() },
       },
       mocks: {
         $t: (msg: string) => msg, // Mock translation function

@@ -16,7 +16,7 @@ import { ref } from 'vue'
 import { useImageStore } from '@/stores/imageStore'
 
 const searchTerm = ref('')
-
+console.log('hello')
 const imageStore = useImageStore()
 const { searchImage } = imageStore
 </script>
