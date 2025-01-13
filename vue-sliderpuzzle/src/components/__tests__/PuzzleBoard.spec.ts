@@ -1,4 +1,4 @@
-import { describe, it, expect, test } from 'vitest'
+import { describe, it, expect, test, vi } from 'vitest'
 
 import PuzzleBoard from '@/components/Puzzle/PuzzleBoard.vue'
 
@@ -11,13 +11,32 @@ describe('<PuzzleBoard />', () => {
     expect(wrapper.text()).toContain('Image Preview')
   })
 
-  test('clicking the reshuffle', async () => {
+  test('clicking the new game button', async () => {
     const wrapper = customMount(PuzzleBoard)
 
-    const button = wrapper.find('button')
+    // Spy on the method
+    const createNewGameSpy = vi.spyOn(wrapper.vm as InstanceType<typeof PuzzleBoard>, 'restartGame')
+
+    const button = wrapper.find({ ref: 'newGameBtn' })
     expect(button.exists()).toBe(true)
     await button.trigger('click')
 
-    expect(wrapper.emitted('gameStart')).toBeTruthy()
+    expect(createNewGameSpy).toHaveBeenCalled()
+  })
+
+  test('clicking the reshuffle button', async () => {
+    const wrapper = customMount(PuzzleBoard)
+
+    // Spy on the method
+    const createNewGameSpy = vi.spyOn(
+      wrapper.vm as InstanceType<typeof PuzzleBoard>,
+      'shuffleTiles',
+    )
+
+    const button = wrapper.find({ ref: 'reshuffleBtn' })
+    expect(button.exists()).toBe(true)
+    await button.trigger('click')
+
+    expect(createNewGameSpy).toHaveBeenCalled()
   })
 })

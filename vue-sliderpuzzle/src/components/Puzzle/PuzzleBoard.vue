@@ -19,8 +19,10 @@
 
     <!-- Controls -->
     <div class="controls">
-      <button type="button" class="shuffle" @click="shuffleTiles">Reshuffle Puzzle</button>
-      <button type="button" class="restart" @click="restartGame">New Game</button>
+      <button type="button" class="shuffle" @click="shuffleTiles" ref="reshuffleBtn">
+        Reshuffle Puzzle
+      </button>
+      <button type="button" class="restart" @click="restartGame" ref="newGameBtn">New Game</button>
     </div>
   </main>
 </template>
@@ -82,7 +84,6 @@ export default {
       image: { urls: { small: string }; alt_description: string }
       size: { horizontal: number; vertical: number }
     }) {
-      console.log(img)
       image.value = (img?.urls.small || monksImage) as string
       imageAlt.value = img?.alt_description || 'Default image'
       size.value = newSize
@@ -209,12 +210,12 @@ export default {
     }
 
     // Restart the game
-    function restartGame() {
-      getRandomImage()
+    async function restartGame() {
+      await getRandomImage()
 
       createPuzzle({
         image: {
-          urls: { small: randomImage.value?.urls.small || '' },
+          urls: { small: randomImage.value?.urls.small || monksImage },
           alt_description: randomImage.value?.alt_description || 'Default description',
         },
         size: size.value,
