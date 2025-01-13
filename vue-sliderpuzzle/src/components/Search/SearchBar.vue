@@ -3,9 +3,9 @@
     <label htmlFor="search">Search for an image</label>
 
     <div class="search-wrapper">
-      <input id="search" type="text" placeholder="Search" v-model="searchTerm" />
+      <input id="search" type="text" placeholder="Search" v-model="searchTerm" ref="searchInput" />
 
-      <button @click="searchImage(searchTerm)">Search</button>
+      <button @click="searchImage(searchTerm)" ref="searchBtn">Search</button>
     </div>
   </div>
 </template>
@@ -16,7 +16,7 @@ import { ref } from 'vue'
 import { useImageStore } from '@/stores/imageStore'
 
 const searchTerm = ref('')
-console.log('hello')
+
 const imageStore = useImageStore()
 const { searchImage } = imageStore
 </script>

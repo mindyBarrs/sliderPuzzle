@@ -11,7 +11,7 @@ interface Image {
 }
 
 interface ImageStoreState {
-  image: Image | null
+  randomImage: Image | null
   loading: boolean
   error: string
   searchedImages: Image[]
@@ -19,7 +19,7 @@ interface ImageStoreState {
 
 export const useImageStore = defineStore('imageStore', {
   state: (): ImageStoreState => ({
-    image: null,
+    randomImage: null,
     loading: false,
     error: '',
     searchedImages: [],
@@ -31,7 +31,7 @@ export const useImageStore = defineStore('imageStore', {
 
       try {
         const response = await axios.get(API_RANDOM_URL)
-        this.image = response.data
+        this.randomImage = response.data
       } catch (error) {
         if (error instanceof Error) {
           this.error = error.message

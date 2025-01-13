@@ -28,7 +28,12 @@
 <script lang="ts">
 import { ref, computed } from 'vue'
 import { sample } from 'lodash'
+import { storeToRefs } from 'pinia'
+
 import PuzzleTile from './PuzzleTile.vue'
+
+import { useImageStore } from '@/stores/imageStore'
+
 import monksImage from '@/assets/monks.jpg'
 
 export default {
@@ -54,6 +59,10 @@ export default {
     >([])
     const tileSize = ref({ width: 0, height: 0 })
 
+    const imageStore = useImageStore()
+    const { randomImage } = storeToRefs(imageStore)
+    const { getRandomImage } = imageStore
+
     // Frame size calculation
     const frameSize = computed(() => ({
       width: `${tileSize.value.width * size.value.horizontal}px`,
@@ -73,7 +82,8 @@ export default {
       image: { urls: { small: string }; alt_description: string }
       size: { horizontal: number; vertical: number }
     }) {
-      image.value = img?.urls.small || monksImage
+      console.log(img)
+      image.value = (img?.urls.small || monksImage) as string
       imageAlt.value = img?.alt_description || 'Default image'
       size.value = newSize
 
@@ -84,7 +94,7 @@ export default {
         generatePuzzleTiles()
         shuffleTiles()
       }
-      imgElement.src = image.value
+      imgElement.src = image.value as unknown as string
     }
 
     // Generate puzzle tiles
@@ -110,6 +120,7 @@ export default {
         const movableTiles = tiles.value.filter((t) =>
           getAdjacentOrders(emptyTile).includes(t.styles.order),
         )
+
         switchTiles(emptyTile, sample(movableTiles))
       }
     }
@@ -199,8 +210,13 @@ export default {
 
     // Restart the game
     function restartGame() {
+      getRandomImage()
+
       createPuzzle({
-        image: { urls: { small: monksImage }, alt_description: 'Default image' },
+        image: {
+          urls: { small: randomImage.value?.urls.small || '' },
+          alt_description: randomImage.value?.alt_description || 'Default description',
+        },
         size: size.value,
       })
     }

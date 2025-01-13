@@ -25,7 +25,7 @@ import { useImageStore } from '@/stores/imageStore'
 import monksImage from '@/assets/monks.jpg'
 
 const imageStore = useImageStore()
-const { image } = storeToRefs(imageStore)
+const { randomImage } = storeToRefs(imageStore)
 const { getRandomImage } = imageStore
 
 const isModalOpened = ref(false)
@@ -51,7 +51,7 @@ const size = {
 const createPuzzle = async () => {
   try {
     await getRandomImage()
-    emit('gameStart', { image: image.value, size })
+    emit('gameStart', { image: randomImage.value, size })
   } catch (error) {
     console.error('Failed to get random image:', error)
     emit('gameStart', { image: monksImage, size })

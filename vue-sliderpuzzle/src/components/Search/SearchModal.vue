@@ -9,7 +9,7 @@
         <div class="modal-body">
           <slot name="content">
             <SearchBar />
-
+            <slot>{{ console.log('hell0', searchedImages) }}</slot>
             <div v-if="searchedImages.length === 0 && !error">No images found</div>
 
             <div v-else-if="error" class="error">{{ error }}</div>
@@ -21,6 +21,7 @@
                   :key="image.id"
                   class="image-item"
                   @click="selectImage(image)"
+                  :ref="image.id"
                 >
                   <img :alt="image.alt_description" :src="image.urls.small" />
                 </li>
@@ -47,7 +48,6 @@ import SearchBar from '@/components/Search/SearchBar.vue'
 
 defineProps({
   isOpen: Boolean,
-  imageResults: [Array, Object],
 })
 
 const emit = defineEmits(['modal-close', 'gameStart'])
