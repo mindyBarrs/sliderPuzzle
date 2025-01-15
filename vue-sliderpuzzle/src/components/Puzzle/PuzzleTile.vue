@@ -1,5 +1,5 @@
 <template>
-  <div class="tile" :style="tile.styles" @click="move" :class="{ empty: tile.isEmpty }" />
+  <div class="tile" :style="tile.styles" @click="move" :class="{ empty: tile.isEmpty }"></div>
 </template>
 
 <script setup lang="ts">
@@ -8,20 +8,28 @@ import { defineEmits, defineProps } from 'vue'
 // Define props with type annotations
 const props = defineProps<{
   tile: {
-    styles: Record<string, string | number>
+    styles: {
+      background: string
+      backgroundPositionX: string
+      backgroundPositionY: string
+      width: string
+      height: string
+      order: number
+    }
+    position: number
     isEmpty: boolean
   }
 }>()
 
 // Define emits
 const emit = defineEmits<{
-  (event: 'moving', tile: typeof props.tile): void
+  (event: 'move', tile: typeof props.tile): void
 }>()
 
 // Emit 'moving' event
 function move() {
   if (!props.tile.isEmpty) {
-    emit('moving', props.tile)
+    emit('move', props.tile)
   }
 }
 </script>

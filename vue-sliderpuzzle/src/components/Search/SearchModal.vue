@@ -9,7 +9,6 @@
         <div class="modal-body">
           <slot name="content">
             <SearchBar />
-            <slot>{{ console.log('hell0', searchedImages) }}</slot>
             <div v-if="searchedImages.length === 0 && !error">No images found</div>
 
             <div v-else-if="error" class="error">{{ error }}</div>
