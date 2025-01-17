@@ -9,7 +9,8 @@ import os
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": ["http://localhost:5174", "http://localhost:5173"]}})
+# ["http://localhost:5174", "http://localhost:5173", "http://localhost:3001"]
+CORS(app,resources={r"/*": {"origins": {"http://localhost:5174", "http://localhost:3000"}}})
 
 # Replace with your Unsplash API access key
 UNSPLASH_ACCESS_KEY = os.getenv("UNSPLASH_API_KEY")
