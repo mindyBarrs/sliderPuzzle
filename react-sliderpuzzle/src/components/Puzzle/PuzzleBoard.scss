@@ -1,14 +1,4 @@
-@use "./../../utils/theme/variables.scss";
-
-$dark-blue: #233d4d;
-$orange: #fe7f2d;
-$yellow: #fcca46;
-$lite-green: #a1c181;
-$mid-green: #619b8a;
-
-$red: #ff0800;
-$white: #fff;
-$black: #000;
+@use "../../utils/theme/variables.scss" as vars;
 
 .puzzle-board {
 	display: flex;
@@ -71,7 +61,7 @@ $black: #000;
 	margin-top: 30px;
 
 	.restart {
-		background: $lite-green;
+		background: vars.$turquoise;
 		display: inline-block;
 		text-decoration: none;
 		padding: 12px 12px;
@@ -80,7 +70,7 @@ $black: #000;
 	}
 
 	.shuffle {
-		background: $orange;
+		background: vars.$orange;
 		display: inline-block;
 		text-decoration: none;
 		padding: 12px 12px;

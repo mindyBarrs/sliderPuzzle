@@ -1,25 +1,17 @@
 import React from "react";
 
-interface TileProps {
-	tile: {
-		styles: {
-			background: string;
-			backgroundPositionX: string;
-			backgroundPositionY: string;
-			width: string;
-			height: string;
-			order: number;
-		};
-		position: number;
-		isEmpty: boolean;
-	};
-	onMove: (tile: TileProps["tile"]) => void;
+import type { TileProps } from "utils/types/puzzleboard.types";
+
+interface PuzzleTileProps {
+	tile: TileProps;
+
+	onMove?: (tile: TileProps) => void;
 }
 
-const PuzzleTile: React.FC<TileProps> = ({ tile, onMove }) => {
+const PuzzleTile: React.FC<PuzzleTileProps> = ({ tile, onMove }) => {
 	const handleMove = () => {
 		if (!tile.isEmpty) {
-			onMove(tile);
+			onMove?.(tile);
 		}
 	};
 

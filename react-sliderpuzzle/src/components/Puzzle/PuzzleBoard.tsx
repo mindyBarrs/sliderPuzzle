@@ -8,44 +8,21 @@ import React, {
 
 import PuzzleTile from "./PuzzleTile"; // Assuming Tile component is in the same directory
 
-import type { Image } from "utils/types/image.types";
+import type {
+	TileProps,
+	PuzzleArgs,
+	PuzzleBoardProps,
+} from "utils/types/puzzleboard.types";
 
 import "./PuzzleBoard.scss";
-
-interface TileData {
-	styles: {
-		background: string;
-		backgroundPositionX: string;
-		backgroundPositionY: string;
-		width: string;
-		height: string;
-		order: number;
-	};
-	position: number;
-	isEmpty: boolean;
-}
-
-interface BoardProps {
-	image: Image;
-	size: { horizontal: number; vertical: number };
-	onRestart: () => void;
-}
-
-interface PuzzleArgs {
-	image: Image;
-	size: {
-		horizontal: number;
-		vertical: number;
-	};
-}
 
 export interface PuzzleBoardRef {
 	createPuzzle: (args: PuzzleArgs) => void;
 }
 
-const PuzzleBoard = forwardRef<PuzzleBoardRef, BoardProps>(
+const PuzzleBoard = forwardRef<PuzzleBoardRef, PuzzleBoardProps>(
 	({ image, size, onRestart }, ref) => {
-		const [tiles, setTiles] = useState<TileData[]>([]);
+		const [tiles, setTiles] = useState<TileProps[]>([]);
 		const [tileSize, setTileSize] = useState({ width: 0, height: 0 });
 		const [isSolved, setIsSolved] = useState(false);
 
@@ -97,11 +74,11 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, BoardProps>(
 			shuffleTiles(newTiles);
 		};
 
-		const shuffleTiles = (tiles: TileData[]) => {
+		const shuffleTiles = (tiles: TileProps[]) => {
 			console.log("hery there", tiles);
 			const shuffledTiles = [...tiles];
 			for (let i = 0; i < shuffledTiles.length * 5; i++) {
-				const emptyTile = shuffledTiles.find((t) => t.isEmpty);
+				const emptyTile = shuffledTiles.find((t) => t?.isEmpty);
 				const adjacentTiles = getAdjacentTiles(emptyTile!, shuffledTiles);
 				const randomTile =
 					adjacentTiles[Math.floor(Math.random() * adjacentTiles.length)];
@@ -110,8 +87,8 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, BoardProps>(
 			setTiles(shuffledTiles);
 		};
 
-		const moveTile = (tile: TileData) => {
-			const emptyTile = tiles.find((t) => t.isEmpty);
+		const moveTile = (tile: TileProps) => {
+			const emptyTile = tiles.find((t) => t?.isEmpty);
 			if (emptyTile && getAdjacentTiles(tile, tiles).includes(emptyTile)) {
 				const updatedTiles = [...tiles];
 				switchTiles(emptyTile, tile);
@@ -120,14 +97,14 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, BoardProps>(
 			}
 		};
 
-		const switchTiles = (tileA: TileData, tileB: TileData) => {
+		const switchTiles = (tileA: TileProps, tileB: TileProps) => {
 			[tileA.styles.order, tileB.styles.order] = [
 				tileB.styles.order,
 				tileA.styles.order,
 			];
 		};
 
-		const getAdjacentTiles = (tile: TileData, tiles: TileData[]) => {
+		const getAdjacentTiles = (tile: TileProps, tiles: TileProps[]) => {
 			const pos = tile.styles.order;
 			return tiles.filter((t) =>
 				[
@@ -139,7 +116,7 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, BoardProps>(
 			);
 		};
 
-		const checkIfSolved = (tiles: TileData[]) => {
+		const checkIfSolved = (tiles: TileProps[]) => {
 			setIsSolved(tiles.every((tile) => tile.styles.order === tile.position));
 		};
 

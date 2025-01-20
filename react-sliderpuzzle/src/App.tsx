@@ -7,6 +7,8 @@ import StartPanel from "feature/startPanel";
 import type { GameStartPayload } from "utils/types/game.types";
 import type { Image } from "utils/types/image.types";
 
+import "./utils/theme/base.scss";
+
 const App: React.FC = () => {
 	const [playing, setPlaying] = useState(false);
 	const [image, setImage] = useState<Image | null>(null);
@@ -16,13 +18,17 @@ const App: React.FC = () => {
 	} | null>(null);
 
 	const createPuzzle = (payload: GameStartPayload) => {
+		console.log("hello");
+
 		setImage(payload.image);
 		setSize(payload.size);
 		setPlaying(true);
 	};
 
 	return (
-		<div>
+		<>
+			<h1>Slide Puzzle</h1>
+
 			{playing ? (
 				<PuzzleBoard
 					size={size || { horizontal: 0, vertical: 0 }}
@@ -38,11 +44,9 @@ const App: React.FC = () => {
 					}
 				/>
 			) : (
-				<div>
-					<StartPanel onGameStart={createPuzzle} />
-				</div>
+				<StartPanel onGameStart={createPuzzle} />
 			)}
-		</div>
+		</>
 	);
 };
 

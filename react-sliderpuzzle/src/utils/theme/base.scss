@@ -1,1 +1,20 @@
-@use "variables.scss";
+@use "../../utils/theme/variables.scss" as vars;
+
+body {
+	background: vars.$beige;
+	font-family: vars.$primaiy-font;
+
+	#root {
+		width: 600px;
+		height: auto;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		margin: auto;
+
+		h1 {
+			color: vars.$burgandy;
+		}
+	}
+}

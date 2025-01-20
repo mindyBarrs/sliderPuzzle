@@ -3,16 +3,9 @@ import React, { useEffect, useRef } from "react";
 import SearchBar from "./SearchBar";
 
 import { useSearchImages } from "queries/image.queries";
-import { Image } from "utils/types/image.types";
 
-interface ModalProps {
-	isOpen: boolean;
-	onClose: () => void;
-	onGameStart: (payload: {
-		image: Image;
-		size: { horizontal: number; vertical: number };
-	}) => void;
-}
+import type { Image } from "utils/types/image.types";
+import type { ModalProps } from "utils/types/component.types";
 
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onGameStart }) => {
 	const targetRef = useRef<HTMLDivElement | null>(null);

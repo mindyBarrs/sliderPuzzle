@@ -1,9 +1,6 @@
-import type { Image } from "./image.types";
+import type { Image, Size } from "./image.types";
 
 export interface GameStartPayload {
 	image: Image;
-	size: {
-		horizontal: number;
-		vertical: number;
-	};
+	size: Size;
 }
