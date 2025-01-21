@@ -1,0 +1,16 @@
+@use "../utils/theme/variables.scss" as vars;
+
+#optionsForm {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.startGame {
+	background-color: vars.$turquoise;
+	border: vars.$mid-turquoise;
+
+	&:hover {
+		background-color: vars.$mid-turquoise;
+	}
+}

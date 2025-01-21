@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from "react";
 
-import SearchBar from "./SearchBar";
+import SearchBar from "components/SearchBar";
 
 import { useSearchImages } from "queries/image.queries";
 

@@ -9,5 +9,6 @@ export interface ModalProps {
 export interface ButtonProps {
 	id: string;
 	label: string;
-	onClick: () => void;
+	className: string;
+	onClickHandler: () => void;
 }

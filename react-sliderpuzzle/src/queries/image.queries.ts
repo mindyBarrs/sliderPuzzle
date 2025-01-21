@@ -34,6 +34,7 @@ export const useRandomImage = () => {
 	return useQuery<Image, Error>({
 		queryKey: ["randomImage"],
 		queryFn: fetchRandomImage,
+		enabled: false,
 	});
 };
 

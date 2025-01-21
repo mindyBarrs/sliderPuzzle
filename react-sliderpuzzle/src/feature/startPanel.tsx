@@ -1,17 +1,15 @@
 import React, { useState } from "react";
 
-import Modal from "components/Modal"; // Import your React version of SearchModal
+import Modal from "components/Modal";
+import Button from "components/Button";
 
 import { useRandomImage } from "queries/image.queries";
 
 import type { GameStartPayload } from "utils/types/game.types";
+import type { Size } from "utils/types/image.types";
 
-import MonkImage from "assets/monks.jpg"; // Ensure the correct path and filename
-
-interface Size {
-	horizontal: number;
-	vertical: number;
-}
+import "./startPanel.scss";
+import MonkImage from "assets/monks.jpg";
 
 interface OptionsFormProps {
 	onGameStart: (payload: GameStartPayload) => void;
@@ -62,10 +60,18 @@ const OptionsForm: React.FC<OptionsFormProps> = ({ onGameStart }) => {
 
 	return (
 		<div id="optionsForm">
-			<button onClick={createPuzzle}>Create Puzzle with Random Image</button>
-			<button type="button" onClick={openModal}>
-				Search for image & Create Puzzle
-			</button>
+			<Button
+				id="randomStart"
+				onClickHandler={createPuzzle}
+				label="Create Puzzle with Random Image"
+				className="startGame"
+			/>
+			<Button
+				id="searchStart"
+				onClickHandler={openModal}
+				label="Search for image & Create Puzzle"
+				className="startGame"
+			/>
 
 			<Modal
 				isOpen={isModalOpened}

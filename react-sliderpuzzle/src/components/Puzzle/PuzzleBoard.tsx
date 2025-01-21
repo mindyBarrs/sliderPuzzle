@@ -46,12 +46,10 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, PuzzleBoardProps>(
 				setTileSize({ width: tileWidth, height: tileHeight });
 				generateTiles(tileWidth, tileHeight);
 			};
-			img.src = image.urls.small;
+			img.src = image?.urls?.small;
 		};
 
 		const generateTiles = (tileWidth: number, tileHeight: number) => {
-			console.log("Hello", tileWidth, tileHeight);
-
 			const newTiles = Array.from(
 				{ length: size.horizontal * size.vertical },
 				(_, i) => ({
@@ -75,8 +73,8 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, PuzzleBoardProps>(
 		};
 
 		const shuffleTiles = (tiles: TileProps[]) => {
-			console.log("hery there", tiles);
 			const shuffledTiles = [...tiles];
+
 			for (let i = 0; i < shuffledTiles.length * 5; i++) {
 				const emptyTile = shuffledTiles.find((t) => t?.isEmpty);
 				const adjacentTiles = getAdjacentTiles(emptyTile!, shuffledTiles);
@@ -142,7 +140,7 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, PuzzleBoardProps>(
 
 					<div className="preview">
 						<h3>Image Preview</h3>
-						<img src={image.urls.small} alt={image.alt_description} />
+						<img src={image?.urls?.small} alt={image?.alt_description} />
 					</div>
 				</div>
 

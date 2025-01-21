@@ -18,8 +18,6 @@ const App: React.FC = () => {
 	} | null>(null);
 
 	const createPuzzle = (payload: GameStartPayload) => {
-		console.log("hello");
-
 		setImage(payload.image);
 		setSize(payload.size);
 		setPlaying(true);
