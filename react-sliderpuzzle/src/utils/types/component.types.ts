@@ -12,3 +12,9 @@ export interface ButtonProps {
 	className: string;
 	onClickHandler: () => void;
 }
+
+export interface SearchBarProps {
+	searchTerm: string;
+	setSearchTerm: (searchTerm: string) => void;
+	onClickHandler: () => void;
+}

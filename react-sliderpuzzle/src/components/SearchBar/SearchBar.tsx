@@ -1,12 +1,6 @@
-import React, { useRef, useState } from "react";
+import React, { useRef } from "react";
 
-import { useSearchImages } from "queries/image.queries";
-
-interface SearchBarProps {
-	searchTerm: string;
-	setSearchTerm: (searchTerm: string) => void;
-	onClickHandler: () => void;
-}
+import { SearchBarProps } from "utils/types/component.types";
 
 const SearchBar: React.FC<SearchBarProps> = ({
 	searchTerm,
