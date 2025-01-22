@@ -6,27 +6,31 @@ import React, {
 	useImperativeHandle,
 } from "react";
 
-import PuzzleTile from "./PuzzleTile"; // Assuming Tile component is in the same directory
+import PuzzleTile from "./PuzzleTile";
+
+import { useRandomImage } from "queries/image.queries";
 
 import type {
 	TileProps,
-	PuzzleArgs,
 	PuzzleBoardProps,
 } from "utils/types/puzzleboard.types";
 
+import MonkImage from "assets/monks.jpg";
 import "./PuzzleBoard.scss";
 
 export interface PuzzleBoardRef {
-	createPuzzle: (args: PuzzleArgs) => void;
+	createPuzzle: (args: PuzzleBoardProps) => void;
 }
 
 const PuzzleBoard = forwardRef<PuzzleBoardRef, PuzzleBoardProps>(
-	({ image, size, onRestart }, ref) => {
+	({ image, size }, ref) => {
 		const [tiles, setTiles] = useState<TileProps[]>([]);
 		const [tileSize, setTileSize] = useState({ width: 0, height: 0 });
 		const [isSolved, setIsSolved] = useState(false);
 
 		const frameRef = useRef<HTMLDivElement>(null);
+
+		const { data: randomImage, refetch: getRandomImage } = useRandomImage();
 
 		useImperativeHandle(ref, () => ({
 			createPuzzle,
@@ -36,7 +40,7 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, PuzzleBoardProps>(
 			createPuzzle({ image, size });
 		}, [image, size]);
 
-		const createPuzzle = ({ image, size }: PuzzleArgs) => {
+		const createPuzzle = ({ image, size }: PuzzleBoardProps) => {
 			const img = new Image();
 
 			img.onload = () => {
@@ -50,11 +54,12 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, PuzzleBoardProps>(
 		};
 
 		const generateTiles = (tileWidth: number, tileHeight: number) => {
+			console.log(image?.urls?.small);
 			const newTiles = Array.from(
 				{ length: size.horizontal * size.vertical },
 				(_, i) => ({
 					styles: {
-						background: i === 0 ? "transparent" : `url(${image.urls.small})`,
+						background: i === 0 ? "transparent" : `url(${image?.urls?.small})`,
 						backgroundPositionX: `-${(i % size.horizontal) * tileWidth}px`,
 						backgroundPositionY: `-${
 							Math.floor(i / size.horizontal) * tileHeight
@@ -118,6 +123,24 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, PuzzleBoardProps>(
 			setIsSolved(tiles.every((tile) => tile.styles.order === tile.position));
 		};
 
+		const onRestart = async () => {
+			try {
+				await getRandomImage();
+
+				if (randomImage) {
+					createPuzzle({
+						image: randomImage,
+						size,
+					});
+				} else {
+					throw new Error("No image found");
+				}
+			} catch (error) {
+				console.error("Failed to get random image:", error);
+				createPuzzle({ image: MonkImage, size });
+			}
+		};
+
 		return (
 			<main className="board">
 				<div className="puzzle-board">
@@ -152,6 +175,7 @@ const PuzzleBoard = forwardRef<PuzzleBoardRef, PuzzleBoardProps>(
 					>
 						Reshuffle Puzzle
 					</button>
+
 					<button type="button" className="restart" onClick={onRestart}>
 						New Game
 					</button>

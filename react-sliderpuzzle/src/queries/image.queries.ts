@@ -32,9 +32,9 @@ const searchImages = async (term: string): Promise<Image[]> => {
 // Custom hook for random image
 export const useRandomImage = () => {
 	return useQuery<Image, Error>({
+		retry: false,
 		queryKey: ["randomImage"],
 		queryFn: fetchRandomImage,
-		enabled: false,
 	});
 };
 
@@ -43,6 +43,7 @@ export const useSearchImages = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<Image[], Error, string>({
+		retry: false,
 		mutationFn: searchImages,
 		onSuccess: (data, term) => {
 			// Optionally update cached data or invalidate related queries

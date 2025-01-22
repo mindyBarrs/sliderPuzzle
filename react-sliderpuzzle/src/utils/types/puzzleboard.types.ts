@@ -18,10 +18,4 @@ export interface TileProps {
 export interface PuzzleBoardProps {
 	image: Image;
 	size: Size;
-	onRestart?: () => void;
-}
-
-export interface PuzzleArgs {
-	image: Image;
-	size: Size;
 }

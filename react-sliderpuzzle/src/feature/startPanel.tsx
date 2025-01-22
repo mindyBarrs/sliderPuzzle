@@ -40,10 +40,7 @@ const OptionsForm: React.FC<OptionsFormProps> = ({ onGameStart }) => {
 			if (randomImage) {
 				onGameStart({
 					image: randomImage,
-					size: {
-						horizontal: 4,
-						vertical: 4,
-					},
+					size,
 				});
 			} else {
 				throw new Error("No image found");
