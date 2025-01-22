@@ -2,19 +2,21 @@ import React, { useRef, useState } from "react";
 
 import { useSearchImages } from "queries/image.queries";
 
-const SearchBar: React.FC = () => {
-	const [searchTerm, setSearchTerm] = useState("");
+interface SearchBarProps {
+	searchTerm: string;
+	setSearchTerm: (searchTerm: string) => void;
+	onClickHandler: () => void;
+}
 
+const SearchBar: React.FC<SearchBarProps> = ({
+	searchTerm,
+	setSearchTerm,
+	onClickHandler,
+}) => {
 	const searchInputRef = useRef<HTMLInputElement | null>(null);
 	const searchBtnRef = useRef<HTMLButtonElement | null>(null);
 
-	const { mutate: searchImage } = useSearchImages();
-
-	const handleSearch = () => {
-		if (searchTerm.trim()) {
-			searchImage(searchTerm);
-		}
-	};
+	// const { mutate: searchImage } = useSearchImages();
 
 	return (
 		<div>
@@ -30,7 +32,7 @@ const SearchBar: React.FC = () => {
 					ref={searchInputRef}
 				/>
 
-				<button onClick={handleSearch} ref={searchBtnRef}>
+				<button onClick={onClickHandler} ref={searchBtnRef}>
 					Search
 				</button>
 			</div>

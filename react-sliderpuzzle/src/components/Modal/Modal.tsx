@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import SearchBar from "components/SearchBar";
 
@@ -7,11 +7,21 @@ import { useSearchImages } from "queries/image.queries";
 import type { Image } from "utils/types/image.types";
 import type { ModalProps } from "utils/types/component.types";
 
+import "./Modal.scss";
+
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onGameStart }) => {
+	const [searchTerm, setSearchTerm] = useState("");
+
 	const targetRef = useRef<HTMLDivElement | null>(null);
 	const closeModalBtnRef = useRef<HTMLButtonElement | null>(null);
 
-	const { data: searchedImages, error } = useSearchImages();
+	const { mutate: searchImage, data: searchImages, error } = useSearchImages();
+
+	const handleSearch = () => {
+		if (searchTerm.trim()) {
+			searchImage(searchTerm);
+		}
+	};
 
 	const handleOutsideClick = (e: MouseEvent) => {
 		if (targetRef.current && !targetRef.current.contains(e.target as Node)) {
@@ -36,6 +46,8 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onGameStart }) => {
 		onClose();
 	};
 
+	console.log(searchImages);
+
 	if (!isOpen) return null;
 
 	return (
@@ -49,16 +61,18 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onGameStart }) => {
 					</div>
 
 					<div className="modal-body">
-						<SearchBar />
+						<SearchBar
+							searchTerm={searchTerm}
+							setSearchTerm={setSearchTerm}
+							onClickHandler={handleSearch}
+						/>
 
-						{searchedImages?.length === 0 && !error && (
-							<div>No images found</div>
-						)}
+						{searchImages?.length === 0 && !error && <div>No images found</div>}
 						{error && <div className="error">{error.message}</div>}
 
-						{searchedImages && searchedImages.length > 0 && (
+						{searchImages && searchImages.length > 0 && (
 							<ul className="image-container">
-								{searchedImages.map((image: Image) => (
+								{searchImages.map((image: Image) => (
 									<li
 										key={image.id}
 										className="image-item"

@@ -21,12 +21,24 @@ const fetchRandomImage = async (): Promise<Image> => {
 };
 
 // Search images by term
+interface SearchResponse {
+	results: Image[];
+}
+
 const searchImages = async (term: string): Promise<Image[]> => {
-	const response = await axios.post<{ results: Image[] }>(API_SEARCH_URL, {
+	const response = await axios.post<SearchResponse>(API_SEARCH_URL, {
 		term,
 	});
 
-	return response.data.results;
+	const transformedData: Image[] = response.data.results.map((image) => ({
+		id: image.id,
+		alt_description: image.alt_description || "No description available",
+		urls: {
+			small: image.urls.small,
+		},
+	}));
+
+	return transformedData;
 };
 
 // Custom hook for random image
@@ -43,11 +55,10 @@ export const useSearchImages = () => {
 	const queryClient = useQueryClient();
 
 	return useMutation<Image[], Error, string>({
-		retry: false,
 		mutationFn: searchImages,
 		onSuccess: (data, term) => {
 			// Optionally update cached data or invalidate related queries
-			queryClient.setQueryData(["searchedImages", term], data);
+			queryClient.setQueryData(["searchImages", term], data);
 		},
 	});
 };
