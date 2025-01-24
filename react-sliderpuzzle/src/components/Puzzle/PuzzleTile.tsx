@@ -4,7 +4,6 @@ import type { TileProps } from "utils/types/puzzleboard.types";
 
 interface PuzzleTileProps {
 	tile: TileProps;
-
 	onMove?: (tile: TileProps) => void;
 }
 
