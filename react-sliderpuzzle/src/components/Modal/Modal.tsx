@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import SearchBar from "components/SearchBar";
 
@@ -13,21 +13,17 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onGameStart }) => {
 	const [searchTerm, setSearchTerm] = useState("");
 
 	const targetRef = useRef<HTMLDivElement | null>(null);
-	const closeModalBtnRef = useRef<HTMLButtonElement | null>(null);
 
 	const { mutate: searchImage, data: searchImages, error } = useSearchImages();
 
-	const handleSearch = () => {
-		if (searchTerm.trim()) {
-			searchImage(searchTerm);
-		}
-	};
-
-	const handleOutsideClick = (e: MouseEvent) => {
-		if (targetRef.current && !targetRef.current.contains(e.target as Node)) {
-			onClose();
-		}
-	};
+	const handleOutsideClick = useCallback(
+		(e: MouseEvent) => {
+			if (targetRef.current && !targetRef.current.contains(e.target as Node)) {
+				onClose();
+			}
+		},
+		[onClose]
+	);
 
 	useEffect(() => {
 		if (isOpen) {
@@ -41,12 +37,16 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onGameStart }) => {
 		};
 	}, [isOpen]);
 
+	const handleSearch = useCallback(() => {
+		if (searchTerm.trim()) {
+			searchImage(searchTerm);
+		}
+	}, [searchTerm, searchImage]);
+
 	const handleSelectImage = (image: Image) => {
 		onGameStart({ image, size: { horizontal: 4, vertical: 4 } });
 		onClose();
 	};
-
-	console.log(searchImages);
 
 	if (!isOpen) return null;
 
@@ -55,9 +55,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onGameStart }) => {
 			<div className="modal-wrapper">
 				<div className="modal-container" ref={targetRef}>
 					<div className="modal-header">
-						<button onClick={onClose} ref={closeModalBtnRef}>
-							X
-						</button>
+						<button onClick={onClose}>X</button>
 					</div>
 
 					<div className="modal-body">
@@ -84,8 +82,6 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onGameStart }) => {
 							</ul>
 						)}
 					</div>
-
-					<div className="modal-footer"></div>
 				</div>
 			</div>
 		</div>
