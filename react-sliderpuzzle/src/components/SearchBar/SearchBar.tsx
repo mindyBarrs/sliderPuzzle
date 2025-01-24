@@ -1,17 +1,14 @@
-import React, { useRef } from "react";
+import React from "react";
 
 import { SearchBarProps } from "utils/types/component.types";
+
+import "./SearchBar.scss";
 
 const SearchBar: React.FC<SearchBarProps> = ({
 	searchTerm,
 	setSearchTerm,
 	onClickHandler,
 }) => {
-	const searchInputRef = useRef<HTMLInputElement | null>(null);
-	const searchBtnRef = useRef<HTMLButtonElement | null>(null);
-
-	// const { mutate: searchImage } = useSearchImages();
-
 	return (
 		<div>
 			<label htmlFor="search">Search for an image</label>
@@ -20,15 +17,12 @@ const SearchBar: React.FC<SearchBarProps> = ({
 				<input
 					id="search"
 					type="text"
-					placeholder="Search"
+					placeholder="Search for an image"
 					value={searchTerm}
 					onChange={(e) => setSearchTerm(e.target.value)}
-					ref={searchInputRef}
 				/>
 
-				<button onClick={onClickHandler} ref={searchBtnRef}>
-					Search
-				</button>
+				<button onClick={onClickHandler}>Search</button>
 			</div>
 		</div>
 	);
