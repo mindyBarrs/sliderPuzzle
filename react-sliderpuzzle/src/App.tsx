@@ -37,6 +37,7 @@ const App: React.FC = () => {
 							},
 						}
 					}
+					setImage={setImage}
 				/>
 			) : (
 				<StartPanel onGameStart={createPuzzle} />

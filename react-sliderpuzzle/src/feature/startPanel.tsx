@@ -63,6 +63,7 @@ const OptionsForm: React.FC<OptionsFormProps> = ({ onGameStart }) => {
 				label="Create Puzzle with Random Image"
 				className="startGame"
 			/>
+
 			<Button
 				id="searchStart"
 				onClickHandler={openModal}

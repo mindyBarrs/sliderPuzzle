@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 
 import PuzzleTile from "./PuzzleTile";
+import Button from "components/Button";
 
 import { useRandomImage } from "queries/image.queries";
 
+import type { Image } from "utils/types/image.types";
 import type {
 	TileProps,
 	PuzzleBoardProps,
@@ -12,21 +14,15 @@ import type {
 import MonkImage from "assets/monks.jpg";
 import "./PuzzleBoard.scss";
 
-// export interface PuzzleBoardRef {
-// 	createPuzzle: (args: PuzzleBoardProps) => void;
-// }
-
-const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ image, size }) => {
+const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ image, size, setImage }) => {
 	const [tiles, setTiles] = useState<TileProps[]>([]);
 	const [tileSize, setTileSize] = useState({ width: 0, height: 0 });
 	const [isSolved, setIsSolved] = useState(false);
 
-	const frameRef = useRef<HTMLDivElement>(null);
-
 	const { data: randomImage, refetch: getRandomImage } = useRandomImage();
 
 	useEffect(() => {
-		createPuzzle({ image, size });
+		createPuzzle({ image, size, setImage });
 	}, [image, size]);
 
 	const createPuzzle = ({ image, size }: PuzzleBoardProps) => {
@@ -37,17 +33,23 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ image, size }) => {
 			const tileHeight = Math.floor(img.height / size.vertical);
 
 			setTileSize({ width: tileWidth, height: tileHeight });
-			generateTiles(tileWidth, tileHeight);
+			generateTiles(tileWidth, tileHeight, image);
 		};
+
 		img.src = image?.urls?.small;
 	};
 
-	const generateTiles = (tileWidth: number, tileHeight: number) => {
+	const generateTiles = (
+		tileWidth: number,
+		tileHeight: number,
+		image: Image
+	) => {
 		const newTiles = Array.from(
 			{ length: size.horizontal * size.vertical },
 			(_, i) => ({
 				styles: {
-					background: i === 0 ? "transparent" : `url(${image?.urls?.small})`,
+					backgroundImage:
+						i === 0 ? "transparent" : `url(${image?.urls?.small})`,
 					backgroundPositionX: `-${(i % size.horizontal) * tileWidth}px`,
 					backgroundPositionY: `-${
 						Math.floor(i / size.horizontal) * tileHeight
@@ -75,24 +77,35 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ image, size }) => {
 				adjacentTiles[Math.floor(Math.random() * adjacentTiles.length)];
 			switchTiles(emptyTile!, randomTile);
 		}
+
 		setTiles(shuffledTiles);
 	};
 
 	const moveTile = (tile: TileProps) => {
 		const emptyTile = tiles.find((t) => t?.isEmpty);
+
 		if (emptyTile && getAdjacentTiles(tile, tiles).includes(emptyTile)) {
 			const updatedTiles = [...tiles];
+
 			switchTiles(emptyTile, tile);
 			setTiles(updatedTiles);
+
 			checkIfSolved(updatedTiles);
 		}
 	};
 
 	const switchTiles = (tileA: TileProps, tileB: TileProps) => {
-		[tileA.styles.order, tileB.styles.order] = [
-			tileB.styles.order,
-			tileA.styles.order,
-		];
+		const tempOrder = tileA.styles.order;
+
+		tileA.styles = {
+			...tileA.styles, // Copy other styles
+			order: tileB.styles.order, // Assign the new 'order'
+		};
+
+		tileB.styles = {
+			...tileB.styles, // Copy other styles
+			order: tempOrder, // Assign the swapped 'order'
+		};
 	};
 
 	const getAdjacentTiles = (tile: TileProps, tiles: TileProps[]) => {
@@ -116,16 +129,13 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ image, size }) => {
 			await getRandomImage();
 
 			if (randomImage) {
-				createPuzzle({
-					image: randomImage,
-					size,
-				});
+				setImage(randomImage);
 			} else {
 				throw new Error("No image found");
 			}
 		} catch (error) {
 			console.error("Failed to get random image:", error);
-			createPuzzle({ image: MonkImage, size });
+			setImage(MonkImage);
 		}
 	};
 
@@ -134,7 +144,6 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ image, size }) => {
 			<div className="puzzle-board">
 				<div
 					className="frame-wrapper"
-					ref={frameRef}
 					style={{
 						width: `${tileSize.width * size.horizontal}px`,
 						height: `${tileSize.height * size.vertical}px`,
@@ -156,17 +165,18 @@ const PuzzleBoard: React.FC<PuzzleBoardProps> = ({ image, size }) => {
 			</div>
 
 			<div className="controls">
-				<button
-					type="button"
+				<Button
+					id="resuffle"
 					className="shuffle"
-					onClick={() => shuffleTiles(tiles)}
-				>
-					Reshuffle Puzzle
-				</button>
-
-				<button type="button" className="restart" onClick={onRestart}>
-					New Game
-				</button>
+					label="Reshuffle Puzzle"
+					onClickHandler={() => shuffleTiles(tiles)}
+				/>
+				<Button
+					id="newGame"
+					className="restart"
+					label="New Game"
+					onClickHandler={onRestart}
+				/>
 			</div>
 		</main>
 	);

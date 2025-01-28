@@ -2,7 +2,7 @@ import type { Image, Size } from "utils/types/image.types";
 
 export interface TileProps {
 	styles: {
-		background: string;
+		backgroundImage: string;
 		backgroundPositionX: string;
 		backgroundPositionY: string;
 		width: string;
@@ -18,4 +18,5 @@ export interface TileProps {
 export interface PuzzleBoardProps {
 	image: Image;
 	size: Size;
+	setImage: (image: Image) => void;
 }
