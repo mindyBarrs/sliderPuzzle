@@ -69,17 +69,28 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, onGameStart }) => {
 						{error && <div className="error">{error.message}</div>}
 
 						{searchImages && searchImages.length > 0 && (
-							<ul className="image-container">
+							<div className="image-container">
 								{searchImages.map((image: Image) => (
-									<li
+									<button
 										key={image.id}
 										className="image-item"
 										onClick={() => handleSelectImage(image)}
 									>
 										<img alt={image.alt_description} src={image.urls.small} />
-									</li>
+									</button>
 								))}
-							</ul>
+							</div>
+							// <ul className="image-container">
+							// 	{searchImages.map((image: Image) => (
+							// 		<li
+							// 			key={image.id}
+							// 			className="image-item"
+							// 			onClick={() => handleSelectImage(image)}
+							// 		>
+							// 			<img alt={image.alt_description} src={image.urls.small} />
+							// 		</li>
+							// 	))}
+							// </ul>
 						)}
 					</div>
 				</div>

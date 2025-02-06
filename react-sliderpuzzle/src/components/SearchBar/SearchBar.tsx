@@ -10,7 +10,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 	onClickHandler,
 }) => {
 	return (
-		<div>
+		<div className="search">
 			<label htmlFor="search">Search for an image</label>
 
 			<div className="search-wrapper">

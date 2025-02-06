@@ -6,11 +6,10 @@
 	flex-wrap: wrap;
 	justify-content: center;
 	align-items: flex-end;
-	gap: 25px;
+	gap: 65px;
 }
 
 .frame-wrapper {
-	margin-right: 50px;
 	position: relative;
 	box-shadow: 0 0 0px 10px;
 
@@ -49,7 +48,6 @@
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	gap: 15px;
 
 	img {
 		max-width: 100%;
@@ -58,7 +56,10 @@
 }
 
 .controls {
-	margin-top: 30px;
+	margin-top: 50px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
 
 	.restart {
 		background: vars.$turquoise;

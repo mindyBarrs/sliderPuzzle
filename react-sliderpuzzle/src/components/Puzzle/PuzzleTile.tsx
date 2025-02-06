@@ -2,6 +2,8 @@ import React from "react";
 
 import type { TileProps } from "utils/types/puzzleboard.types";
 
+import "./PuzzleTile.scss";
+
 interface PuzzleTileProps {
 	tile: TileProps;
 	onMove?: (tile: TileProps) => void;
